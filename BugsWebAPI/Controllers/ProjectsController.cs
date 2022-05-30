@@ -30,7 +30,7 @@ namespace BugsWebAPI.Controllers
             var project = await _context.ProjectModels.FindAsync(id);
             if (project == null)
             {
-                return BadRequest("Student Not found!");
+                return BadRequest("Project Not found!");
             }
             return Ok(project);
         }
