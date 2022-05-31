@@ -4,6 +4,7 @@ using BugsWebAPI.Data;
 using BugsWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
+using System;
 
 namespace BugsWebAPI.Controllers
 {
@@ -12,6 +13,7 @@ namespace BugsWebAPI.Controllers
     public class BugsController : ControllerBase
     {
         private readonly BugsContext _context;
+        private static DateTime _ahora = DateTime.UtcNow;
 
         public BugsController(BugsContext context)
         {
@@ -25,7 +27,7 @@ namespace BugsWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<BugModel>> Get(int id)
+        public async Task<ActionResult<BugModel>> Get(int id = 1)
         {
             var bug = await _context.BugModels.FindAsync(id);
             if (bug == null)
@@ -33,6 +35,31 @@ namespace BugsWebAPI.Controllers
                 return BadRequest("Bug Not found!");
             }
             return Ok(bug);
+        }
+
+        [HttpGet("{userId?}/{projectId?}/{startDate?}/{endDate?}")]
+        public async Task<ActionResult<BugModel>> GetBugs(int? projectId = 0, int? userId = 0, DateTime startDate = default(DateTime), DateTime endDate = default(DateTime))
+        {
+            var bugs = await _context.BugModels.ToListAsync();
+            if (userId > 0)
+            {
+                bugs = bugs.FindAll(b => b.Id == userId);
+
+            }
+            if (projectId > 0)
+            {
+                bugs = bugs.FindAll(b => b.Id == projectId);
+            }
+            if (startDate != null)
+            {
+                bugs = bugs.FindAll(b => b.CreationDate >= startDate);
+            }
+            if (endDate != null)
+            {
+                bugs = bugs.FindAll(b => b.CreationDate <= endDate);
+            }
+
+            return Ok(bugs);
         }
 
         [HttpPost]
