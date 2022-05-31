@@ -20,11 +20,11 @@ namespace BugsWebAPI.Controllers
             _context = context;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<BugModel>>> Get()
-        {
-            return Ok(await _context.BugModels.ToListAsync());
-        }
+        //[HttpGet]
+        //public async Task<ActionResult<List<BugModel>>> Get()
+        //{
+        //    return Ok(await _context.BugModels.ToListAsync());
+        //}
 
         [HttpGet("{id}")]
         public async Task<ActionResult<BugModel>> Get(int id = 1)
@@ -37,27 +37,15 @@ namespace BugsWebAPI.Controllers
             return Ok(bug);
         }
 
-        [HttpGet("{userId?}/{projectId?}/{startDate?}/{endDate?}")]
+        [HttpGet]
         public async Task<ActionResult<BugModel>> GetBugs(int? projectId = 0, int? userId = 0, DateTime startDate = default(DateTime), DateTime endDate = default(DateTime))
         {
             var bugs = await _context.BugModels.ToListAsync();
-            if (userId > 0)
-            {
-                bugs = bugs.FindAll(b => b.Id == userId);
 
-            }
-            if (projectId > 0)
-            {
-                bugs = bugs.FindAll(b => b.Id == projectId);
-            }
-            if (startDate != null)
-            {
-                bugs = bugs.FindAll(b => b.CreationDate >= startDate);
-            }
-            if (endDate != null)
-            {
-                bugs = bugs.FindAll(b => b.CreationDate <= endDate);
-            }
+            bugs = (userId > 0) ? bugs.FindAll(b => b.UserId.Id == userId) : bugs;
+            bugs = (projectId > 0) ? bugs.FindAll(b => b.ProjectId.Id == projectId) : bugs;
+            bugs = (startDate != null) ? bugs.FindAll(b => b.CreationDate >= startDate) : bugs;
+            bugs = (endDate != null) ? bugs.FindAll(b => b.CreationDate <= endDate) : bugs;
 
             return Ok(bugs);
         }
