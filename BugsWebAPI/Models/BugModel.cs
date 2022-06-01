@@ -7,8 +7,8 @@ namespace BugsWebAPI.Models
     {
         [Key]
         public int Id { get; set; }
-        public ProjectModel ProjectId { get; set; }
-        public UserModel UserId { get; set; }
+        public int ProjectId { get; set; }
+        public UserModel User { get; set; }
         [Required]
         [StringLength(100)]
         public string Description { get; set; }
