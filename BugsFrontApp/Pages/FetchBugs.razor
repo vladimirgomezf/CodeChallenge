@@ -1,11 +1,9 @@
 ﻿@page "/fetchbugs"
-@inject HttpClient Http
+@inject IBugService bugService
 
-<h1>Weather forecast</h1>
+<h1>Bugs!</h1>
 
-<p>This component demonstrates fetching data from the server.</p>
-
-@if (forecasts == null)
+@if (bugs == null)
 {
     <p><em>Loading...</em></p>
 }
@@ -14,20 +12,20 @@ else
     <table class="table">
         <thead>
             <tr>
-                <th>Date</th>
-                <th>Temp. (C)</th>
-                <th>Temp. (F)</th>
-                <th>Summary</th>
+                <th>ProjectId</th>
+                <th>User</th>
+                <th>Description</th>
+                <th>Creation Date</th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var forecast in forecasts)
+            @foreach (var u in bugs)
             {
                 <tr>
-                    <td>@forecast.Date.ToShortDateString()</td>
-                    <td>@forecast.TemperatureC</td>
-                    <td>@forecast.TemperatureF</td>
-                    <td>@forecast.Summary</td>
+                    <td>@u.ProjectId</td>
+                    <td>@u.User.Name</td>
+                    <td>@u.Description</td>
+                    <td>@u.CreationDate</td>
                 </tr>
             }
         </tbody>
@@ -35,21 +33,10 @@ else
 }
 
 @code {
-    private WeatherForecast[] forecasts;
+    List<BugModel> bugs = new List<BugModel>();
 
     protected override async Task OnInitializedAsync()
     {
-        forecasts = await Http.GetFromJsonAsync<WeatherForecast[]>("sample-data/weather.json");
-    }
-
-    public class WeatherForecast
-    {
-        public DateTime Date { get; set; }
-
-        public int TemperatureC { get; set; }
-
-        public string Summary { get; set; }
-
-        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+        bugs = await bugService.GetBugs();
     }
 }
