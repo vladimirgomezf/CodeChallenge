@@ -20,11 +20,31 @@ namespace BugsWebAPI.Controllers
             _context = context;
         }
 
-        //[HttpGet]
-        //public async Task<ActionResult<List<BugModel>>> Get()
-        //{
-        //    return Ok(await _context.BugModels.ToListAsync());
-        //}
+        [HttpGet]
+        public async Task<ActionResult<BugModel>> GetBugs(int? projectId, DateTime? startDate, DateTime? endDate)
+        {
+            var bugs = await _context.BugModels.ToListAsync();
+            //if (userId != null)
+            //{
+            //    bugs = bugs.FindAll(b => b.User.Id == userId);
+
+            //}
+            if (projectId != null)
+            {
+                bugs = bugs.FindAll(b => b.ProjectId == projectId);
+            }
+            if (startDate != null)
+            {
+                bugs = bugs.FindAll(b => b.CreationDate >= startDate);
+            }
+            if (endDate != null)
+            {
+                bugs = bugs.FindAll(b => b.CreationDate <= endDate);
+            }
+
+            return Ok(bugs);
+        }
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<BugModel>> Get(int id = 1)
@@ -35,19 +55,6 @@ namespace BugsWebAPI.Controllers
                 return BadRequest("Bug Not found!");
             }
             return Ok(bug);
-        }
-
-        [HttpGet]
-        public async Task<ActionResult<BugModel>> GetBugs(int? projectId = 0, int? userId = 0, DateTime startDate = default(DateTime), DateTime endDate = default(DateTime))
-        {
-            var bugs = await _context.BugModels.ToListAsync();
-
-            bugs = (userId > 0) ? bugs.FindAll(b => b.UserId.Id == userId) : bugs;
-            bugs = (projectId > 0) ? bugs.FindAll(b => b.ProjectId.Id == projectId) : bugs;
-            bugs = (startDate != null) ? bugs.FindAll(b => b.CreationDate >= startDate) : bugs;
-            bugs = (endDate != null) ? bugs.FindAll(b => b.CreationDate <= endDate) : bugs;
-
-            return Ok(bugs);
         }
 
         [HttpPost]
@@ -67,7 +74,7 @@ namespace BugsWebAPI.Controllers
                 return BadRequest("Bug not found!");
 
             dbBug.ProjectId = bug.ProjectId;
-            dbBug.UserId = bug.UserId;
+            dbBug.User = bug.User;
             dbBug.Description = bug.Description;
             dbBug.CreationDate = bug.CreationDate;
 
