@@ -1,0 +1,38 @@
+﻿@page "/fetchprojects"
+@inject IProjectService projectService
+
+<h1>Projects!</h1>
+
+@if (projects == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var u in projects)
+            {
+                <tr>
+                    <td>@u.Name</td>
+                    <td>@u.Description</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<ProjectModel> projects = new List<ProjectModel>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        projects = await projectService.GetProjects();
+    }
+}
