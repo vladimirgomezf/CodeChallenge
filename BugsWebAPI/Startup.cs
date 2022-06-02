@@ -28,6 +28,15 @@ namespace BugsWebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(policy =>
+            {
+                policy.AddPolicy("CorsPolicy", opt => opt
+                    .AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                );
+            });
+
             string ConnectionString = Configuration.GetConnectionString("Local");
             services.AddDbContext<BugsContext>(opt => opt.UseSqlServer(ConnectionString));
             services.AddControllers();
@@ -57,6 +66,8 @@ namespace BugsWebAPI
             {
                 endpoints.MapControllers();
             });
+
+            app.UseCors("CorsPolicy");
         }
     }
 }
