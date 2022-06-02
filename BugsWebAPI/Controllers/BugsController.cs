@@ -5,6 +5,7 @@ using BugsWebAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 using System;
+using BugsWebAPI.DTOs;
 
 namespace BugsWebAPI.Controllers
 {
@@ -21,14 +22,14 @@ namespace BugsWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BugModel>> GetBugs(int? projectId, DateTime? startDate, DateTime? endDate)
+        public async Task<ActionResult<BugModel>> GetBugs(int? projectId, UserDTO? user, DateTime? startDate, DateTime? endDate)
         {
             var bugs = await _context.BugModels.ToListAsync();
-            //if (userId != null)
-            //{
-            //    bugs = bugs.FindAll(b => b.User.Id == userId);
+            if (user != null)
+            {
+                bugs = bugs.FindAll(b => b.User.Id == user.Id);
 
-            //}
+            }
             if (projectId != null)
             {
                 bugs = bugs.FindAll(b => b.ProjectId == projectId);
