@@ -22,12 +22,12 @@ namespace BugsWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<BugModel>> GetBugs(int? projectId, UserDTO? user, DateTime? startDate, DateTime? endDate)
+        public async Task<ActionResult<BugModel>> GetBugs(int? projectId, int? userId, DateTime? startDate, DateTime? endDate)
         {
             var bugs = await _context.BugModels.ToListAsync();
-            if (user != null)
+            if (userId != null)
             {
-                bugs = bugs.FindAll(b => b.User.Id == user.Id);
+                bugs = bugs.FindAll(b => b.User.Id == userId);
 
             }
             if (projectId != null)
